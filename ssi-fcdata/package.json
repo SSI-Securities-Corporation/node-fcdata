@@ -1,0 +1,11 @@
+{
+  "name": "ssi-fcdata",
+  "version": "1.0.0",
+  "description": "This is javascript client for FastConnect DataAPI",
+  "main": "index.js",
+  "author": "ducdv@ssi.com.vn",
+  "license": "ISC",
+  "dependencies": {
+    "websocket": "1.0.17"
+  }
+}
