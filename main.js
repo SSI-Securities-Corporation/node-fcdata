@@ -1,8 +1,8 @@
 /** @START_CONFIG */
-const rxjs = require('rxjs');
+
 const express = require('express');
 const config = require('./config.js');
-const marketStreaming = require('./Streamings/marketStreaming');
+const client = require('ssi-fcdata');
 const axios = require('axios');
 const app = express();
 const port = 3020;
@@ -13,8 +13,10 @@ app.get('/Securities', (req, res) => {
   lookupRequest.market = "HOSE";
   lookupRequest.pageIndex = 4;
   lookupRequest.pageSize = 100;
+  Object.assign(lookupRequest, req.query)
 
-  axios.get(config.market.ApiUrl + "Securities?lookupRequest.market=" + lookupRequest.market
+  axios.get(config.market.ApiUrl +  client.api.GET_SECURITIES_LIST
+    + "?lookupRequest.market=" + lookupRequest.market
     + "&lookupRequest.pageIndex=" + lookupRequest.pageIndex
     + "&lookupRequest.pageSize=" + lookupRequest.pageSize)
     .then(response => {
@@ -28,8 +30,8 @@ app.get('/SecuritiesDetails', (req, res) => {
   lookupRequest.symbol = "";
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
-
-  axios.get(config.market.ApiUrl + "SecuritiesDetails"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + +  client.api.GET_SECURITIES_DETAILs
     + "?lookupRequest.market=" + lookupRequest.market
     + "&lookupRequest.pageIndex=" + lookupRequest.pageIndex
     + "&lookupRequest.pageSize=" + lookupRequest.pageSize
@@ -44,8 +46,8 @@ app.get('/IndexComponents', (req, res) => {
   lookupRequest.indexCode = "";
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
-
-  axios.get(config.market.ApiUrl + "IndexComponents"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_INDEX_COMPONENTS
     + "?lookupRequest.indexCode=" + lookupRequest.indexCode
     + "&lookupRequest.pageIndex=" + lookupRequest.pageIndex
     + "&lookupRequest.pageSize=" + lookupRequest.pageSize)
@@ -59,8 +61,8 @@ app.get('/IndexList', (req, res) => {
   lookupRequest.exchange = "HOSE";
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
-
-  axios.get(config.market.ApiUrl + "IndexList"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_INDEX_LIST
     + "?lookupRequest.exchange=" + lookupRequest.exchange
     + "&lookupRequest.pageIndex=" + lookupRequest.pageIndex
     + "&lookupRequest.pageSize=" + lookupRequest.pageSize)
@@ -77,8 +79,8 @@ app.get('/DailyOhlc', (req, res) => {
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
   lookupRequest.ascending = true;
-
-  axios.get(config.market.ApiUrl + "DailyOhlc"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_DAILY_OHLC
     + "?lookupRequest.symbol=" + lookupRequest.symbol
     + "&lookupRequest.fromDate=" + lookupRequest.fromDate
     + "&lookupRequest.toDate=" + lookupRequest.toDate
@@ -98,8 +100,8 @@ app.get('/IntradayOhlc', (req, res) => {
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
   lookupRequest.ascending = false;
-
-  axios.get(config.market.ApiUrl + "IntradayOhlc"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_INTRADAY_OHLC
     + "?lookupRequest.symbol=" + lookupRequest.symbol
     + "&lookupRequest.fromDate=" + lookupRequest.fromDate
     + "&lookupRequest.toDate=" + lookupRequest.toDate
@@ -119,8 +121,8 @@ app.get('/DailyIndex', (req, res) => {
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
   lookupRequest.ascending = true;
-
-  axios.get(config.market.ApiUrl + "DailyIndex"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_DAILY_INDEX
     + "?lookupRequest.indexId=" + lookupRequest.indexId
     + "&lookupRequest.fromDate=" + lookupRequest.fromDate
     + "&lookupRequest.toDate=" + lookupRequest.toDate
@@ -140,8 +142,8 @@ app.get('/DailyStockPrice', (req, res) => {
   lookupRequest.toDate = "04/12/2021";
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
-
-  axios.get(config.market.ApiUrl + "DailyStockPrice"
+  Object.assign(lookupRequest, req.query)
+  axios.get(config.market.ApiUrl + client.api.GET_DAILY_STOCKPRICE
     + "?lookupRequest.symbol=" + lookupRequest.symbol
     + "&lookupRequest.fromDate=" + lookupRequest.fromDate
     + "&lookupRequest.toDate=" + lookupRequest.toDate
@@ -159,11 +161,11 @@ const rq = axios.create({
 })
 
 rq({
-  url: config.market.ApiUrl + "AccessToken",
+  url: config.market.ApiUrl + client.api.GET_ACCESS_TOKEN,
   method: 'post',
   data: {
-    consumerID: config.market.id,
-    consumerSecret: config.market.priKey,
+    consumerID: config.market.ConsumerId,
+    consumerSecret: config.market.ConsumerSecret,
   }
 }).then(response => {
   if (response.data.status === 200) {
@@ -173,28 +175,17 @@ rq({
       return axios_config;
     });
 
-    marketStreaming.initStream({
+    client.initStream({
       url: config.market.HubUrl,
       token: token,
     });
-
-    var mkClient = marketStreaming.start();
-
-    mkClient.serviceHandlers.connected = function (connection) {
-      mkClient.invoke(
-        'FcMarketDataV2Hub',
-        'SwitchChannels',
-        'X-QUOTE:ALL'
-      );
-    }
-
-    mkClient.serviceHandlers.reconnecting = function (connection) {
-      mkClient.invoke(
-        'FcMarketDataV2Hub',
-        'SwitchChannels',
-        'X:ALL'
-      );
-    }
+    client.bind(client.events.onData, function(message){
+      console.log(message)
+    })
+    client.bind(client.events.onConnected, function(){
+      client.switchChannel("X-QUOTE:ALL")
+    })
+    client.start();
   } else {
     console.log(response.data.message)
   }
