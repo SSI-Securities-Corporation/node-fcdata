@@ -1,5 +1,12 @@
 # FCData NodeJS Client Changelog
 
+# [2.1.0](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v2.0.0...v2.1.0) (2023-06-20)
+
+
+### Features
+
+* update zip ([822ad5e](https://github.com/SSI-Securities-Corporation/node-fcdata/commit/822ad5e9afe55250599dddf88bb147a4c8aa730d))
+
 # [2.0.0](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v1.0.0...v2.0.0) (2023-06-20)
 
 
