@@ -1,5 +1,17 @@
 # FCData NodeJS Client Changelog
 
+# [2.0.0](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v1.0.0...v2.0.0) (2023-06-20)
+
+
+### Features
+
+* update readme ([79e0132](https://github.com/SSI-Securities-Corporation/node-fcdata/commit/79e0132f905e03e9d44b90ec7ee51cc0f1490f64))
+
+
+### BREAKING CHANGES
+
+* remove protobuf v1 version
+
 # 1.0.0 (2023-06-20)
 
 
