@@ -1,5 +1,12 @@
 # FCData NodeJS Client Changelog
 
+## [2.1.2](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v2.1.1...v2.1.2) (2023-07-18)
+
+
+### Bug Fixes
+
+* update docs and example ([f9691e3](https://github.com/SSI-Securities-Corporation/node-fcdata/commit/f9691e30c4c4f2aab2d43f6558b757c2eae3d9be))
+
 ## [2.1.1](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v2.1.0...v2.1.1) (2023-07-18)
 
 
