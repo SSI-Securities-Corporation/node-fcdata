@@ -31,7 +31,7 @@ app.get('/SecuritiesDetails', (req, res) => {
   lookupRequest.pageIndex = 1;
   lookupRequest.pageSize = 1000;
   Object.assign(lookupRequest, req.query)
-  axios.get(config.market.ApiUrl + +  client.api.GET_SECURITIES_DETAILs
+  axios.get(config.market.ApiUrl +  client.api.GET_SECURITIES_DETAILs
     + "?lookupRequest.market=" + lookupRequest.market
     + "&lookupRequest.pageIndex=" + lookupRequest.pageIndex
     + "&lookupRequest.pageSize=" + lookupRequest.pageSize
