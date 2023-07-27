@@ -1,5 +1,12 @@
 # FCData NodeJS Client Changelog
 
+# [2.2.0](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v2.1.2...v2.2.0) (2023-07-27)
+
+
+### Features
+
+* update new domain for data hub streaming ([5e5b620](https://github.com/SSI-Securities-Corporation/node-fcdata/commit/5e5b620d16b90b627006228cb4077c870937b38e))
+
 ## [2.1.2](https://github.com/SSI-Securities-Corporation/node-fcdata/compare/v2.1.1...v2.1.2) (2023-07-18)
 
 
